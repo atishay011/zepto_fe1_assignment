@@ -1,13 +1,14 @@
-import React from 'react';
+import React, { forwardRef } from 'react';
 
-const TextField = ({ value, onChange, onKeyDown, placeholder }) => (
+const TextField = forwardRef(({ value, onChange, placeholder, ...props }, ref) => (
   <input
+    ref={ref}
     className="flex-1 outline-none placeholder-gray-400"
     placeholder={placeholder}
     value={value}
     onChange={onChange}
-    onKeyDown={onKeyDown}
+    {...props}
   />
-);
+));
 
 export default TextField;

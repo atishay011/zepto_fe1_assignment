@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState , useRef, useMemo, useCallback } from 'react';
 import UserAvatar from '../assets/user_avatar.png';
 import Chip from './Chip';
 import TextField from './TextField';
@@ -14,28 +14,24 @@ const ChipInput = () => {
 
     const [selectedItems, setSelectedItems] = useState([]);
     const [inputValue, setInputValue] = useState('');
-    const [isInputFocused, setInputFocused] = useState(false);
 
-    const handleSelectItem = (item) => {
-        setSelectedItems([...selectedItems, item]);
-        setItems(items.filter((i) => i.email !== item.email));
+    const inputRef = useRef(null);
+
+    const handleDeleteChip = useCallback((item) => {
+        setSelectedItems((currentSelectedItems) => currentSelectedItems.filter((i) => i.email !== item.email));
+        setItems((currentItems) => [...currentItems, item]);
+        inputRef.current?.focus(); 
+      }, []);
+    
+      const handleSelectItem = useCallback((item) => {
+        setSelectedItems((currentSelectedItems) => [...currentSelectedItems, item]);
+        setItems((currentItems) => currentItems.filter((i) => i.email !== item.email));
         setInputValue('');
-    };
-
-    const handleDeleteChip = (item) => {
-        setSelectedItems(selectedItems.filter((i) => i.email !== item.email));
-        setItems([...items, item]);
-    };
-
-    const handleKeyDown = (e) => {
-        if (e.key === 'Backspace' && inputValue === '' && selectedItems.length > 0 && isInputFocused) {
-            handleDeleteChip(selectedItems[selectedItems.length - 1]);
-        }
-    };
-
-    const filteredItems = items.filter((item) => item.name.toLowerCase().includes(inputValue.toLowerCase()));
-
-
+      }, []);
+    
+      const filteredItems = useMemo(() => {
+        return items.filter((item) => item.name.toLowerCase().includes(inputValue.toLowerCase()));
+      }, [items, inputValue]);
 
 
     return (
@@ -45,12 +41,10 @@ const ChipInput = () => {
                     <Chip key={item.email} item={item} onDelete={handleDeleteChip} />
                 ))}
                 <TextField
+                    ref={inputRef}
                     placeholder="Add new user..."
                     value={inputValue}
                     onChange={(e) => setInputValue(e.target.value)}
-                    onKeyDown={handleKeyDown}
-                    onFocus={() => setInputFocused(true)}
-                    onBlur={() => setInputFocused(false)}
                 />
             </div>
             {inputValue && (
