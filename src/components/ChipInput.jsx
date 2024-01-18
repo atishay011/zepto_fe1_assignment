@@ -5,12 +5,7 @@ import TextField from './TextField';
 
 const ChipInput = () => {
 
-    const [items, setItems] = useState([
-        { name: 'Atishay Jain', email: 'atishayjain690@gmail.com', avatar: UserAvatar },
-        { name: 'Narendra Modi', email: 'narendramodi@gmail.com', avatar: UserAvatar },
-        { name: 'Nelson Mandela', email: 'nelsonmandela@gmail.com', avatar: UserAvatar },
-        { name: 'Barack Obama', email: 'b.obama@gmail.com', avatar: UserAvatar },
-    ]);
+    const [items, setItems] = useState(USERS_LIST);
 
     const [selectedItems, setSelectedItems] = useState([]);
     const [inputValue, setInputValue] = useState('');
