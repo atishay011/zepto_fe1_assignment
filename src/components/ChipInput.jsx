@@ -1,4 +1,4 @@
-import React, { useState , useRef, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import UserAvatar from '../assets/user_avatar.png';
 import Chip from './Chip';
 import TextField from './TextField';
@@ -15,23 +15,46 @@ const ChipInput = () => {
     const [selectedItems, setSelectedItems] = useState([]);
     const [inputValue, setInputValue] = useState('');
 
+    const [debouncedSearchTerm, setDebouncedSearchTerm] = useState(inputValue); 
+
+
+    const debounceTimerRef = useRef(null);
+
+    // Effect to handle the input for debouncing
+    useEffect(() => {
+        if (debounceTimerRef.current) {
+            clearTimeout(debounceTimerRef.current);
+        }
+
+        debounceTimerRef.current = setTimeout(() => {
+            setDebouncedSearchTerm(inputValue);
+        }, 500);
+
+        return () => {
+            if (debounceTimerRef.current) {
+                clearTimeout(debounceTimerRef.current);
+            }
+        };
+    }, [inputValue]);
+
     const inputRef = useRef(null);
 
     const handleDeleteChip = useCallback((item) => {
         setSelectedItems((currentSelectedItems) => currentSelectedItems.filter((i) => i.email !== item.email));
         setItems((currentItems) => [...currentItems, item]);
-        inputRef.current?.focus(); 
-      }, []);
-    
-      const handleSelectItem = useCallback((item) => {
+        inputRef.current?.focus();
+    }, []);
+
+    const handleSelectItem = useCallback((item) => {
         setSelectedItems((currentSelectedItems) => [...currentSelectedItems, item]);
         setItems((currentItems) => currentItems.filter((i) => i.email !== item.email));
         setInputValue('');
-      }, []);
+    }, []);
+
     
-      const filteredItems = useMemo(() => {
-        return items.filter((item) => item.name.toLowerCase().includes(inputValue.toLowerCase()));
-      }, [items, inputValue]);
+    const filteredItems = useMemo(() => {
+        return items.filter((item) => item.name.toLowerCase().includes(debouncedSearchTerm.toLowerCase()));
+    }, [items, debouncedSearchTerm]);
 
 
     return (
