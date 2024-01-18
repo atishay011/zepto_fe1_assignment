@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
-import UserAvatar from '../assets/user_avatar.png';
 import Chip from './Chip';
 import TextField from './TextField';
+import USERS_LIST from '../constants/mock_data'
 
 const ChipInput = () => {
 
